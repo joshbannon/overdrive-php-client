@@ -91,7 +91,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             ),
             'timeout' => $timeout,
             'connect_timeout' => $timeout,
-            'body' => array(
+            'form_params' => array(
                 "grant_type" => "password",
                 "username" => $username,
                 "password" => "x-ignoreme-x",
@@ -267,7 +267,8 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
         if($this->_cache->get($cacheKey, $ret)) {
             return $ret;
         }
-        $request = $this->_client->createRequest("GET", $this->_apiUrlBase . "/v1/patrons/me/holds", array(
+
+        $response = $this->_client->get($this->_apiUrlBase . "/v1/patrons/me/holds", array(
             'headers' => array(
                 "Accept" => "application/json",
                 "User-Agent" => $this->_userAgent,
@@ -275,7 +276,6 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             ),
             'timeout' => 5,
             'connect_timeout' => 5));
-        $response = $this->_client->send($request);
         $bodyStream = $response->getBody();
         $strCast = (string)$bodyStream;
         $jsonResponse = json_decode($strCast, true);

@@ -2,13 +2,19 @@
 
 use \OverDrivePHPClient\client\OverDriveAPIClientFactory,
     \OverDrivePHPClient\client\OverDriveLibraryAPIClient,
-    \OverDrivePHPClient\client\OverDrivePatronAPIClient;
+    \OverDrivePHPClient\client\OverDrivePatronAPIClient,
+    \OverDrivePHPClient\data\CannotReturnException,
+    \OverDrivePHPClient\data\InvalidCredentialsException,
+    \OverDrivePHPClient\data\Loan,
+    \OverDrivePHPClient\data\LoanOption,
+    \OverDrivePHPClient\data\Hold
+    ;
 
 use \Memcached\Wrapper as Cache;
 
 class OverDriveDriverTests extends PHPUnit_Framework_TestCase
 {
-    private $useMemcache = false;
+    private $useMemcache = true;
 
     static private $libraryAuthUrlBase;
     static private $libraryAPIUrlBase;
@@ -90,7 +96,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
                 static::$collectionId,
                 $cache);
             $res = $driver->login(0, 0, static::$libraryId, true);
-            $this->isFalse($res);
+            $this->assertFalse($res);
         } catch(InvalidCredentialsException $e) {
 
         }
@@ -158,7 +164,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
             "jbannon@dclibraries.org");
         $username = '23025006522064';
         $res = $driver->login(static::$clientKey, static::$clientSecret, $username, true);
-        $this->isTrue($res);
+        $this->assertTrue($res);
 
         static::$patronDriver = $driver;
     }
