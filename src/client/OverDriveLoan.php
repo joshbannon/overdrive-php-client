@@ -8,7 +8,7 @@
 
 namespace OverDrivePHPClient\client;
 
-require_once dirname(__FILE__).'/../Loan.php';
+use OverDrivePHPClient\data\AccessLink, OverDrivePHPClient\data\Loan;
 
 class OverDriveLoan extends Loan {
     /** @var  AccessLink[] */
@@ -28,7 +28,7 @@ class OverDriveLoan extends Loan {
     }
 
     /**
-     * @return \EContentProvider\AccessLink[]
+     * @return AccessLink[]
      */
     public function getLinks()
     {

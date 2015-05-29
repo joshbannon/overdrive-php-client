@@ -7,5 +7,9 @@
     {
       "name": "Joshua Bannon"
     }
-  ]
+  ],
+  "require": {
+    "guzzlehttp/guzzle": "6.0.1",
+    "alekseykorzun/memcached-wrapper-php": "v2.0.0"
+  }
 }

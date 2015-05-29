@@ -20,7 +20,7 @@ abstract class Hold {
     }
 
     /**
-     * @return mixed
+     * @return string|int
      */
     public function getExternalItemId()
     {

@@ -8,15 +8,18 @@
 
 namespace OverDrivePHPClient\client;
 
-require_once dirname(__FILE__).'/../AccessToken.php';
-require_once dirname(__FILE__).'/../InvalidCredentialsException.php';
-require_once dirname(__FILE__).'/../CannotReturnException.php';
-require_once dirname(__FILE__).'/../LoanOption.php';
-require_once dirname(__FILE__).'/../LoanOptionsCollection.php';
-require_once dirname(__FILE__).'/../AccessLink.php';
-require_once dirname(__FILE__) . '/OverDriveLoan.php';
-require_once dirname(__FILE__) . '/OverDriveHold.php';
-require_once dirname(__FILE__).'/../I_ProvidePatronServices.php';
+use OverDrivePHPClient\interfaces\I_ProvidePatronServices,
+    OverDrivePHPClient\data\AccessLink,
+    OverDrivePHPClient\data\AccessToken,
+    OverDrivePHPClient\data\AlreadyReservedException,
+    OverDrivePHPClient\data\CannotReturnException,
+    OverDrivePHPClient\data\Hold,
+    OverDrivePHPClient\data\InvalidCredentialsException,
+    OverDrivePHPClient\data\Loan,
+    OverDrivePHPClient\data\LoanOption
+   ;
+
+use \Memcached\Wrapper as Cache;
 
 class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_ProvidePatronServices {
     /** @var  \GuzzleHttp\Client */
@@ -27,16 +30,18 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
     private $_websiteId;
     private $_librarycardILS_ID;
     private $_notificationEmail;
+    /** @var  string $_userAgent */
+    private $_userAgent;
 
-    /** @var  \Memcache $_cache */
+    /** @var  Cache $_cache */
     private $_cache;
 
     /** @var  AccessToken $_access_token */
     private $_access_token;
 
-    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $librarycardILS_ID,  $memcache, $notificationEmail)
+    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $librarycardILS_ID,  $memcache, $notificationEmail, $userAgent = "OverDrivePHPClient")
     {
-        parent::__construct($client, $libraryAuthBase, $libraryAPIBase, $collectionId, $memcache);
+        parent::__construct($client, $libraryAuthBase, $libraryAPIBase, $collectionId, $memcache, $userAgent);
         $this->_client = $client;
         $this->_authUrlBase = $patronAuthUrlBase;
         $this->_apiUrlBase = $patronAPIUrlBase;
@@ -45,6 +50,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
         $this->_librarycardILS_ID = $librarycardILS_ID;
         $this->_cache = $memcache;
         $this->_notificationEmail = $notificationEmail;
+        $this->_userAgent = $userAgent;
     }
 
     private $_username;
@@ -73,15 +79,13 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             }
         }
 
-        //$grantBody = "grant_type=password&username=";
         $timeout = 5;
-        //$clientKey = $configArray['OverDrive']['clientKey'];
-        //$clientSecret = $configArray['OverDrive']['clientSecret'];
         $encodedAuthValue = base64_encode($clientKey . ":" . $clientSecret);
-        //$libraryId = $configArray['OverDrive']['libraryId']
-        $request = $this->_client->createRequest("POST", $this->_authUrlBase . "/patrontoken", array(
+
+        $response = $this->_client->post($this->_authUrlBase . "/patrontoken", array(
             'headers' => array(
                 //"Accept" => "application/json",
+                "User-Agent" => $this->_userAgent,
                 "Authorization" => "Basic {$encodedAuthValue}",
                 "Content-Type" => "application/x-www-form-urlencoded;charset=UTF-8"
             ),
@@ -90,15 +94,11 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             'body' => array(
                 "grant_type" => "password",
                 "username" => $username,
-                "password" => "ignoreme",
+                "password" => "x-ignoreme-x",
                 "scope" => "websiteid:{$this->_websiteId} authorizationname:{$this->_librarycardILS_ID}"
-            )
-        ));
+            )));
 
-        $response = null;
         try {
-            $response = $this->_client->send($request);
-
             if ($response->getStatusCode() == 200) {
                 $bodyStream = $response->getBody();
                 $body = (string)$bodyStream;
@@ -109,11 +109,11 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
                 $accessToken = new AccessToken(
                     $responseJ['access_token'],
                     $responseJ['token_type'],
-                    (new \DateTime())->add( \DateInterval::createFromDateString($expiresSecondsFromNow.'second') ),
+                    (new \DateTime())->add( \DateInterval::createFromDateString($expiresSecondsFromNow.'second')),
                     $responseJ['scope']
                 );
                 $this->_access_token = $accessToken;
-                $memcacheFlag = 0;//nothin special
+
                 if($this->_cache != null) {
                     $this->_cache->set($memcacheKey, $accessToken, $expiresSecondsFromNow - 2);
                 }
@@ -152,15 +152,14 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             return $ret;
         }
 
-        $request = $this->_client->createRequest("GET", $this->_apiUrlBase . "/v1/patrons/me/checkouts", array(
+        $response = $this->_client->get($this->_apiUrlBase . "/v1/patrons/me/checkouts", array(
             'headers' => array(
                 "Accept" => "application/json",
-                "User-Agent" => "DCL User Agent",
+                "User-Agent" => $this->_userAgent,
                 "Authorization" => "Bearer ".$this->_access_token->getToken()
             ),
             'timeout' => 5,
             'connect_timeout' => 5));
-        $response = $this->_client->send($request);
         $bodyStream = $response->getBody();
         $strCast = (string)$bodyStream;
         $jsonResponse = json_decode($strCast, true);
@@ -171,7 +170,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
                     $loanId = $checkout['reserveId'];
                     $recordId = $checkout['reserveId'];
                     $endDate = (new \DateTime($checkout['expires']))->setTimezone(new \DateTimeZone(date_default_timezone_get()));
-                    $tempDate = clone $endDate;//Because PHP is stupid
+                    $tempDate = clone $endDate;//Because PHP is stupid and DateTime->sub() modifies its input
                     $startDate = $tempDate->sub(new \DateInterval("P3W")); //3 week checkout
 
                     /** @var AccessLink[] $links */
@@ -226,29 +225,28 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
     }
 
     /**
-     * @param $downloadlinkTemplate - Provided as part of getCheckedOut()
+     * @param $downloadLinkTemplate - Provided as part of getCheckedOut()
      * @return string
      */
-    private function getDownloadLink($downloadlinkTemplate) {
-        $downloadlinkTemplate = str_replace(
+    private function getDownloadLink($downloadLinkTemplate) {
+        $downloadLinkTemplate = str_replace(
             "{errorpageurl}",
             urlencode("http://www.overdrive.com/errorpage.htm"),
-            $downloadlinkTemplate);
+            $downloadLinkTemplate);
 
-        $downloadlinkTemplate = str_replace(
-            "{odreadauthurl}", //yes this is just another error page or something. anything can go here
+        $downloadLinkTemplate = str_replace(
+            "{odreadauthurl}", //yes this is just another error page or something. It seems like anything can go here
             urlencode("http://www.overdrive.com/errorpage.htm"),
-            $downloadlinkTemplate);
+            $downloadLinkTemplate);
 
-        $request = $this->_client->createRequest("GET", $downloadlinkTemplate, array(
+        $response = $this->_client->get($downloadLinkTemplate, array(
             'headers' => array(
                 "Accept" => "application/json",
-                "User-Agent" => "DCL User Agent",
+                "User-Agent" => $this->_userAgent,
                 "Authorization" => "Bearer ".$this->_access_token->getToken()
             ),
             'timeout' => 5,
             'connect_timeout' => 5));
-        $response = $this->_client->send($request);
         $bodyStream = $response->getBody();
         $strCast = (string)$bodyStream;
         $jsonResponse = json_decode($strCast, true);
@@ -260,7 +258,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
         return null;
     }
 
-    const KEY_GET_HOLDS = "OverDrive:getHolds:";
+    const KEY_GET_HOLDS = "OverDrive:GetHolds:";
     public function getHolds()
     {
         $cacheKey = OverDrivePatronAPIClient::KEY_GET_HOLDS.$this->_username;
@@ -272,7 +270,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
         $request = $this->_client->createRequest("GET", $this->_apiUrlBase . "/v1/patrons/me/holds", array(
             'headers' => array(
                 "Accept" => "application/json",
-                "User-Agent" => "DCL User Agent",
+                "User-Agent" => $this->_userAgent,
                 "Authorization" => "Bearer ".$this->_access_token->getToken()
             ),
             'timeout' => 5,
@@ -305,19 +303,17 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
     }
 
     public function releaseHold(Hold $hold) {
-        $request = $this->_client->createRequest(
-            "DELETE",
-            $this->_apiUrlBase . "/v1/patrons/me/holds/{$hold->getExternalItemId()}",
+        $response = $this->_client->delete($this->_apiUrlBase . "/v1/patrons/me/holds/{$hold->getExternalItemId()}",
             array(
                 'headers' => array(
                     "Accept" => "application/json",
-                    "User-Agent" => "DCL User Agent",
+                    "User-Agent" => $this->_userAgent,
                     "Authorization" => "Bearer ".$this->_access_token->getToken()
                 ),
                 'timeout' => 5,
                 'connect_timeout' => 5)
         );
-        $response = $this->_client->send($request);
+
         if($response->getStatusCode() == 204) { //204 Correct, no content returned
             $this->_cache->delete(self::KEY_GET_HOLDS.$this->_username);
             $this->_cache->delete(self::KEY_GET_ITEM_AVAILABILITY.$hold->getExternalItemId());
@@ -334,17 +330,17 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
      */
     public function returnItem(Loan $loan)
     {
-        $request = $this->_client->createRequest("DELETE", $this->_apiUrlBase . "/v1/patrons/me/checkouts/{$loan->getExternalItemId()}", array(
-                'headers' => array(
-                    "Accept" => "application/json",
-                    "User-Agent" => "DCL User Agent",
-                    "Authorization" => "Bearer ".$this->_access_token->getToken()
-                ),
-                'timeout' => 5,
-                'connect_timeout' => 5)
-        );
         try{
-            $response = $this->_client->send($request);
+            $response = $this->_client->delete($this->_apiUrlBase . "/v1/patrons/me/checkouts/{$loan->getExternalItemId()}",
+                array(
+                    'headers' => array(
+                        "Accept" => "application/json",
+                        "User-Agent" => $this->_userAgent,
+                        "Authorization" => "Bearer ".$this->_access_token->getToken()
+                    ),
+                    'timeout' => 5,
+                    'connect_timeout' => 5)
+            );
             if($response->getStatusCode() == 204) { //204 Correct, no content returned
                 $this->_cache->delete(self::KEY_GET_CHECKED_OUT.$this->_username);
                 $this->_cache->delete(self::KEY_GET_ITEM_AVAILABILITY.$loan->getExternalItemId());
@@ -371,7 +367,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
      */
     public function getCheckOutHistory()
     {
-        //Overdrive does not support this
+        //Overdrive does not support this behavior at this time
         return [];
     }
 
@@ -388,21 +384,21 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
         );
         $postBody['fields'][] = array("name"=>"emailAddress", "value"=>$this->_notificationEmail);
         $postBody = json_encode($postBody);
-        $request = $this->_client->createRequest("POST", $this->_apiUrlBase . "/v1/patrons/me/holds", array(
-            'headers' => array(
-                "Accept" => "application/json",
-                "User-Agent" => "DCL User Agent",
-                "Authorization" => "Bearer ".$this->_access_token->getToken(),
-                "Content-Type" => "application/json; charset=utf-8",
-                "Content-Length" => strlen($postBody),
-                "Expect" => "100-continue"
-            ),
-            'timeout' => 5,
-            'connect_timeout' => 5,
-            'body' =>$postBody
-        ));
+
         try{
-            $response = $this->_client->send($request);
+            $response = $this->_client->post($this->_apiUrlBase . "/v1/patrons/me/holds", array(
+                'headers' => array(
+                    "Accept" => "application/json",
+                    "User-Agent" => $this->_userAgent,
+                    "Authorization" => "Bearer ".$this->_access_token->getToken(),
+                    "Content-Type" => "application/json; charset=utf-8",
+                    "Content-Length" => strlen($postBody),
+                    "Expect" => "100-continue"
+                ),
+                'timeout' => 5,
+                'connect_timeout' => 5,
+                'body' =>$postBody
+            ));
 
             if($response->getStatusCode()==201) { //201: Created
                 $bodyStream = $response->getBody();
@@ -442,24 +438,22 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
         if($loanOption->getLoanOptionId() !== null) {
             $postBody['fields'][] = array("name"=>"formatType", "value"=>$loanOption->getLoanOptionId());
         }
-
         $postBody = json_encode($postBody);
-        $request = $this->_client->createRequest("POST", $this->_apiUrlBase . "/v1/patrons/me/checkouts", array(
-                'headers' => array(
-                    "Accept" => "application/json",
-                    "User-Agent" => "DCL User Agent",
-                    "Authorization" => "Bearer ".$this->_access_token->getToken(),
-                    "Content-Type" => "application/json; charset=utf-8",
-                    "Content-Length" => strlen($postBody),
-                    "Expect" => "100-continue"
-                ),
-                'timeout' => 5,
-                'connect_timeout' => 5,
-                'body' => $postBody)
 
-        );
         try {
-            $response = $this->_client->send($request);
+            $response = $this->_client->post($this->_apiUrlBase . "/v1/patrons/me/checkouts", array(
+                    'headers' => array(
+                        "Accept" => "application/json",
+                        "User-Agent" => $this->_userAgent,
+                        "Authorization" => "Bearer ".$this->_access_token->getToken(),
+                        "Content-Type" => "application/json; charset=utf-8",
+                        "Content-Length" => strlen($postBody),
+                        "Expect" => "100-continue"
+                    ),
+                    'timeout' => 5,
+                    'connect_timeout' => 5,
+                    'body' => $postBody)
+            );
             $bodyStream = $response->getBody();
             if($response->getStatusCode() == 201) {
                 $strCast = (string)$bodyStream;
@@ -526,26 +520,25 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
         } else {
             throw new \Exception("No format type selected");
         }
-
         $postBody = json_encode($postBody);
-        $request = $this->_client->createRequest("POST",
-            $this->_apiUrlBase . "/v1/patrons/me/checkouts/{$loanOption->getExternalRecordId()}/formats",
-            array(
-                'headers' => array(
-                    "Accept" => "application/json",
-                    "User-Agent" => "DCL User Agent",
-                    "Authorization" => "Bearer ".$this->_access_token->getToken(),
-                    "Content-Type" => "application/json; charset=utf-8",
-                    "Content-Length" => strlen($postBody),
-                    "Expect" => "100-continue"
-                ),
-                'timeout' => 5,
-                'connect_timeout' => 5,
-                'body' => $postBody)
 
-        );
         try {
-            $response = $this->_client->send($request);
+            $response = $this->_client->post(
+                $this->_apiUrlBase . "/v1/patrons/me/checkouts/{$loanOption->getExternalRecordId()}/formats",
+                array(
+                    'headers' => array(
+                        "Accept" => "application/json",
+                        "User-Agent" => $this->_userAgent,
+                        "Authorization" => "Bearer ".$this->_access_token->getToken(),
+                        "Content-Type" => "application/json; charset=utf-8",
+                        "Content-Length" => strlen($postBody),
+                        "Expect" => "100-continue"
+                    ),
+                    'timeout' => 5,
+                    'connect_timeout' => 5,
+                    'body' => $postBody)
+
+            );
             $bodyStream = $response->getBody();
             if($response->getStatusCode() == 201) {
                 $strCast = (string)$bodyStream;
@@ -579,17 +572,15 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
      */
     public function isFormatSelected($externalRecordId)
     {
-        $request = $this->_client->createRequest("GET",
-            $this->_apiUrlBase . "/v1/patrons/me/checkouts/{$externalRecordId}",
+        $response = $this->_client->get($this->_apiUrlBase . "/v1/patrons/me/checkouts/{$externalRecordId}",
             array(
             'headers' => array(
                 "Accept" => "application/json",
-                "User-Agent" => "DCL User Agent",
+                "User-Agent" => $this->_userAgent,
                 "Authorization" => "Bearer ".$this->_access_token->getToken()
             ),
             'timeout' => 5,
             'connect_timeout' => 5));
-        $response = $this->_client->send($request);
         $bodyStream = $response->getBody();
         $strCast = (string)$bodyStream;
         $jsonResponse = json_decode($strCast, true);

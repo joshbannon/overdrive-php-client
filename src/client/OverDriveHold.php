@@ -8,7 +8,7 @@
 
 namespace OverDrivePHPClient\client;
 
-require_once dirname(__FILE__).'/../Hold.php';
+use OverDrivePHPClient\data\Hold;
 
 class OverDriveHold extends Hold {
 
