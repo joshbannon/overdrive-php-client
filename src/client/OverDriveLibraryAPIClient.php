@@ -23,7 +23,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
     private $_authUrlBase;
     private $_apiUrlBase;
     private $collectionId;
-    /** @var  Cache $_cache */
+    /** @var  Cache|null $_cache */
     private $_cache;
     /** @var  string $_userAgent */
     private $_userAgent;
@@ -31,7 +31,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
     /** @var  AccessToken $_access_token */
     private $_access_token;
 
-    function __construct($client, $libraryAuthUrlBase, $libraryAPIUrlBase, $collectionId, Cache $cache, $userAgent)
+    function __construct($client, $libraryAuthUrlBase, $libraryAPIUrlBase, $collectionId, Cache $cache=null, $userAgent="OverDrivePHPClient")
     {
         $this->_client = $client;
         $this->_authUrlBase = $libraryAuthUrlBase;

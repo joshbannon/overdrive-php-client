@@ -33,22 +33,22 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
     /** @var  string $_userAgent */
     private $_userAgent;
 
-    /** @var  Cache $_cache */
+    /** @var  Cache|null $_cache */
     private $_cache;
 
     /** @var  AccessToken $_access_token */
     private $_access_token;
 
-    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $librarycardILS_ID,  $memcache, $notificationEmail, $userAgent = "OverDrivePHPClient")
+    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $librarycardILS_ID,  Cache $cache = null, $notificationEmail, $userAgent = "OverDrivePHPClient")
     {
-        parent::__construct($client, $libraryAuthBase, $libraryAPIBase, $collectionId, $memcache, $userAgent);
+        parent::__construct($client, $libraryAuthBase, $libraryAPIBase, $collectionId, $cache, $userAgent);
         $this->_client = $client;
         $this->_authUrlBase = $patronAuthUrlBase;
         $this->_apiUrlBase = $patronAPIUrlBase;
         $this->_collectionId = $collectionId;
         $this->_websiteId = $websiteId;
         $this->_librarycardILS_ID = $librarycardILS_ID;
-        $this->_cache = $memcache;
+        $this->_cache = $cache;
         $this->_notificationEmail = $notificationEmail;
         $this->_userAgent = $userAgent;
     }
