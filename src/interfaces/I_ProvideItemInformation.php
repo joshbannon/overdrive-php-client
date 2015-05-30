@@ -16,13 +16,13 @@ interface I_ProvideItemInformation {
      * @param String $externalRecordId
      * @return LoanOptionsCollection
      */
-    public function getCheckoutOptions($externalRecordId);
+    public function getLoanOptions($externalRecordId);
 
     /**
      * @param String[] $externalRecordIds
      * @return LoanOptionsCollection[]
      */
-    public function getCheckoutOptionsForRecords(array $externalRecordIds);
+    public function getLoanOptionsForRecords(array $externalRecordIds);
 
     /**
      * How many copies are currently available for checkout?

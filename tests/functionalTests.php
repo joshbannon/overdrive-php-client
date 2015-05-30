@@ -25,7 +25,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
     static private $libraryId;
     static private $collectionId;
     static private $websiteId;
-    static private $ilsId;
+    static private $ilsId;//Generally the patron's library card number
 
     /** @var  OverDriveLibraryAPIClient */
     static private $libraryDriver;
@@ -35,6 +35,9 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
 
     /** @var  string */
     static private $notificationEmail;
+
+    /** @var  string */
+    static private $username;
 
     public static function setUpBeforeClass()
     {
@@ -46,9 +49,10 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
         static::$clientSecret = "xxx";
         static::$libraryId = 0;
         static::$collectionId = "xxx";
-        static::$websiteId = 269;
+        static::$websiteId = 0;
         static::$ilsId = "xxx";
-        static::$notificationEmail = "x@y.com";
+        static::$notificationEmail = "my@email.com";
+        static::$username = '23025000000000';;
     }
 
     public function test_libraryLoginShouldSucceed()
@@ -77,7 +81,6 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
             static::$collectionId,
             $cache);
         $res = $driver->login(static::$clientKey, static::$clientSecret, false);
-
         $this->assertTrue($res);
         static::$libraryDriver = $driver;
     }
@@ -155,10 +158,20 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
                 array("localhost", 11211)
             ));
         }
+
         $driver = new OverDrivePatronAPIClient(
-            new \GuzzleHttp\Client(), static::$patronAuthUrlBase, static::$patronAPIUrlBase, static::$libraryAuthUrlBase, static::$libraryAPIUrlBase, static::$collectionId, static::$websiteId, static::$ilsId, "jbannon@dclibraries.org", $cache);
-        $username = '23025006522064';
-        $res = $driver->login(static::$clientKey, static::$clientSecret, $username, true);
+            new \GuzzleHttp\Client(),
+            static::$patronAuthUrlBase,
+            static::$patronAPIUrlBase,
+            static::$libraryAuthUrlBase,
+            static::$libraryAPIUrlBase,
+            static::$collectionId,
+            static::$websiteId,
+            static::$ilsId,
+            static::$notificationEmail,
+            $cache);
+
+        $res = $driver->login(static::$clientKey, static::$clientSecret, static::$username, true);
         $this->assertTrue($res);
 
         static::$patronDriver = $driver;
@@ -179,7 +192,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
      * @depends test_search
      */
     public function test_createPatronHold($items) {
-        $loanOptionsCollection = static::$patronDriver->getCheckoutOptions($items[0]['id']);
+        $loanOptionsCollection = static::$patronDriver->getLoanOptions($items[0]['id']);
         $hold = static::$patronDriver->holdItem($loanOptionsCollection->getLoanOptions()[0]);
         $this->assertNotEmpty($hold);
     }
@@ -224,7 +237,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
      * @depends test_search
      */
     public function test_checkout($items) {
-        $loanOptionsCollection = static::$patronDriver->getCheckoutOptions($items[0]['id']);
+        $loanOptionsCollection = static::$patronDriver->getLoanOptions($items[0]['id']);
         //Build a generic so we don't lock in the type and prevent returning
         $loanOption = new LoanOption($items[0]['id'], null, 1, null);
         static::$patronDriver->checkoutItem($loanOption);

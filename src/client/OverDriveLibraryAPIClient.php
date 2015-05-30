@@ -276,7 +276,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
      * @param String $externalRecordId
      * @return LoanOptionsCollection
      */
-    public function getCheckoutOptions($externalRecordId)
+    public function getLoanOptions($externalRecordId)
     {
         $jsonObject = $this->getItemMetaData($externalRecordId);
         $loanOptionsCollection = new LoanOptionsCollection($externalRecordId);
@@ -302,12 +302,12 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
      * @param String[] $externalRecordIds
      * @return LoanOptionsCollection[]
      */
-    public function getCheckoutOptionsForRecords(array $externalRecordIds)
+    public function getLoanOptionsForRecords(array $externalRecordIds)
     {
         // TODO: parrallelize this. We probably need to have getItemMetaData() return a promise()
         $ret = [];
         foreach($externalRecordIds as $recordId) {
-            $ret[] = $this->getCheckoutOptions($recordId);
+            $ret[] = $this->getLoanOptions($recordId);
         }
 
         return $ret;
