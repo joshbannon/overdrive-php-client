@@ -28,7 +28,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
     private $_apiUrlBase;
     private $_collectionId;
     private $_websiteId;
-    private $_librarycardILS_ID;
+    private $_ilsId;
     private $_notificationEmail;
     /** @var  string $_userAgent */
     private $_userAgent;
@@ -39,7 +39,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
     /** @var  AccessToken $_access_token */
     private $_access_token;
 
-    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $librarycardILS_ID, $notificationEmail, Cache $cache = null, $userAgent = "OverDriveClient")
+    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $ilsId, $notificationEmail, Cache $cache = null, $userAgent = "OverDriveClient")
     {
         parent::__construct($client, $libraryAuthBase, $libraryAPIBase, $collectionId, $cache, $userAgent);
         $this->_client = $client;
@@ -47,7 +47,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
         $this->_apiUrlBase = $patronAPIUrlBase;
         $this->_collectionId = $collectionId;
         $this->_websiteId = $websiteId;
-        $this->_librarycardILS_ID = $librarycardILS_ID;
+        $this->_ilsId = $ilsId;
         $this->_cache = $cache;
         $this->_notificationEmail = $notificationEmail;
         $this->_userAgent = $userAgent;
@@ -95,7 +95,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
                 "grant_type" => "password",
                 "username" => $username,
                 "password" => "x-ignoreme-x",
-                "scope" => "websiteid:{$this->_websiteId} authorizationname:{$this->_librarycardILS_ID}"
+                "scope" => "websiteid:{$this->_websiteId} authorizationname:{$this->_ilsId}"
             )));
 
         try {
