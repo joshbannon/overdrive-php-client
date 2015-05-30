@@ -10,7 +10,7 @@ namespace OverDriveClient\interfaces;
 
 interface I_User
 {
-    public function getPin();
-
-    function hasRatings();
+    function getBarcode();
+    function getPin();
+    function getEmail();
 }

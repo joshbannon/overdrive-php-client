@@ -39,7 +39,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
     /** @var  AccessToken $_access_token */
     private $_access_token;
 
-    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $librarycardILS_ID,  Cache $cache = null, $notificationEmail, $userAgent = "OverDriveClient")
+    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $librarycardILS_ID, $notificationEmail, Cache $cache = null, $userAgent = "OverDriveClient")
     {
         parent::__construct($client, $libraryAuthBase, $libraryAPIBase, $collectionId, $cache, $userAgent);
         $this->_client = $client;

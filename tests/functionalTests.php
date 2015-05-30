@@ -156,16 +156,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
             ));
         }
         $driver = new OverDrivePatronAPIClient(
-            new \GuzzleHttp\Client(),
-            static::$patronAuthUrlBase,
-            static::$patronAPIUrlBase,
-            static::$libraryAuthUrlBase,
-            static::$libraryAPIUrlBase,
-            static::$collectionId,
-            static::$websiteId,
-            static::$ilsId,
-            $cache,
-            "jbannon@dclibraries.org");
+            new \GuzzleHttp\Client(), static::$patronAuthUrlBase, static::$patronAPIUrlBase, static::$libraryAuthUrlBase, static::$libraryAPIUrlBase, static::$collectionId, static::$websiteId, static::$ilsId, "jbannon@dclibraries.org", $cache);
         $username = '23025006522064';
         $res = $driver->login(static::$clientKey, static::$clientSecret, $username, true);
         $this->assertTrue($res);

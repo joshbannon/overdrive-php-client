@@ -24,11 +24,10 @@ class OverDriveAPIClientFactory implements I_EContentProviderFactory {
      */
     static function getPatronServices(I_User $user) {
         global $configArray, $memcachedWrapper;
-        $userId = 0;
+
         $username = null;
         $password = null;
         if($user) {
-            $userId = $user->getId();
             $username = $user->getBarcode();
             $password = $user->getPin();
         } else {
@@ -37,20 +36,11 @@ class OverDriveAPIClientFactory implements I_EContentProviderFactory {
 
         $patronClient = null;
         if(!empty($user)) {
-            if(!empty(static::$_patronAPIClients[$userId])) {
-                $patronClient = static::$_patronAPIClients[$userId];
+            if(!empty(static::$_patronAPIClients[$username])) {
+                $patronClient = static::$_patronAPIClients[$username];
             } else {
                 $patronClient = new OverDrivePatronAPIClient(
-                    new \GuzzleHttp\Client(),
-                    $configArray['OverDrive']['patronAuthURL'],
-                    $configArray['OverDrive']['patronApiURL'],
-                    $configArray['OverDrive']['libraryAuthURL'],
-                    $configArray['OverDrive']['libraryApiURL'],
-                    $configArray['OverDrive']['collection_id'],
-                    $configArray['OverDrive']['website_id'],
-                    $configArray['OverDrive']['librarycardILS_ID'],
-                    $memcachedWrapper,
-                    $user->getEmail()
+                    new \GuzzleHttp\Client(), $configArray['OverDrive']['patronAuthURL'], $configArray['OverDrive']['patronApiURL'], $configArray['OverDrive']['libraryAuthURL'], $configArray['OverDrive']['libraryApiURL'], $configArray['OverDrive']['collection_id'], $configArray['OverDrive']['website_id'], $configArray['OverDrive']['librarycardILS_ID'], $user->getEmail(), $memcachedWrapper
                 );
                 $patronClient->login(
                     $configArray['OverDrive']['client_key'],
@@ -59,7 +49,7 @@ class OverDriveAPIClientFactory implements I_EContentProviderFactory {
                     false
                 );
 
-                static::$_patronAPIClients[$userId] = $patronClient;
+                static::$_patronAPIClients[$username] = $patronClient;
             }
         }
 
