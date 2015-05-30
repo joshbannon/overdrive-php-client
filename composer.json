@@ -1,18 +1,21 @@
 {
-  "name": "joshbannon/OverDrivePHPClient",
-  "description": "An API client for overdrive.com to query library and patron information, place checkouts and holds, check availability, and download titles.",
+  "name": "joshbannon/OverDrive-PHP-Client",
+  "description": "An API client for overdrive.com",
+  "keywords": ["library", "libraries", "e-content", "econtent", "overdrive"],
+  "type": "library",
   "license": "MIT",
   "authors": [
     {
       "name": "Joshua Bannon",
       "email": "jdbannon+git@gmail.com",
-      "homepage": "https://github.com/joshbannon"
+      "homepage": "https://github.com/joshbannon",
+      "role": "Developer"
     }
   ],
   "require": {
     "php": ">=5.5.0",
-    "guzzlehttp/guzzle": "6.0.1",
-    "alekseykorzun/memcached-wrapper-php": "v2.0.0"
+    "guzzlehttp/guzzle": "=>6.0",
+    "alekseykorzun/memcached-wrapper-php": ">=v2.0.0"
   },
   "require-dev": {
     "phpunit/phpunit": ">=4.0"
