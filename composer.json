@@ -1,11 +1,12 @@
 {
   "name": "joshbannon/OverDrivePHPClient",
   "description": "An API client for overdrive.com to query library and patron information, place checkouts and holds, check availability, and download titles.",
-  "minimum-stability": "stable",
   "license": "MIT",
   "authors": [
     {
-      "name": "Joshua Bannon"
+      "name": "Joshua Bannon",
+      "email": "jdbannon+git@gmail.com",
+      "homepage": "https://github.com/joshbannon"
     }
   ],
   "require": {
@@ -25,6 +26,10 @@
     "psr-4": {
       "OverDrivePHPClient\\Tests\\": "tests/"
     }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.8-dev"
+    }
   }
-
 }
