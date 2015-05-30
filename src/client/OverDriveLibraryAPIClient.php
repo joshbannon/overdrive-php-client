@@ -6,14 +6,14 @@
  * Time: 2:32 PM
  */
 
-namespace OverDrivePHPClient\client;
+namespace OverDriveClient\client;
 
-use OverDrivePHPClient\interfaces\I_ProvideItemInformation,
-    OverDrivePHPClient\data\AccessToken,
-    OverDrivePHPClient\data\Format,
-    OverDrivePHPClient\data\InvalidCredentialsException,
-    OverDrivePHPClient\data\LoanOption,
-    OverDrivePHPClient\data\LoanOptionsCollection;
+use OverDriveClient\interfaces\I_ProvideItemInformation,
+    OverDriveClient\data\AccessToken,
+    OverDriveClient\data\Format,
+    OverDriveClient\data\InvalidCredentialsException,
+    OverDriveClient\data\LoanOption,
+    OverDriveClient\data\LoanOptionsCollection;
 
 use \Memcached\Wrapper as Cache;
 
@@ -31,7 +31,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
     /** @var  AccessToken $_access_token */
     private $_access_token;
 
-    function __construct($client, $libraryAuthUrlBase, $libraryAPIUrlBase, $collectionId, Cache $cache=null, $userAgent="OverDrivePHPClient")
+    function __construct($client, $libraryAuthUrlBase, $libraryAPIUrlBase, $collectionId, Cache $cache=null, $userAgent="OverDriveClient")
     {
         $this->_client = $client;
         $this->_authUrlBase = $libraryAuthUrlBase;

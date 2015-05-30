@@ -6,7 +6,7 @@
  * Time: 9:30 AM
  */
 
-namespace OverDrivePHPClient\data;
+namespace OverDriveClient\data;
 
 
 class AlreadyReservedException extends \Exception {

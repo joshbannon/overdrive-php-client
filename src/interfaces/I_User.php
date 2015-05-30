@@ -6,7 +6,7 @@
  * Date: 6/6/14
  * Time: 2:45 PM
  */
-namespace OverDrivePHPClient\interfaces;
+namespace OverDriveClient\interfaces;
 
 interface I_User
 {

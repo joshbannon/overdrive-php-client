@@ -6,9 +6,9 @@
  * Time: 9:18 AM
  */
 
-namespace OverDrivePHPClient\interfaces;
+namespace OverDriveClient\interfaces;
 
-use OverDrivePHPClient\data\LoanOptionsCollection;
+use OverDriveClient\data\LoanOptionsCollection;
 
 interface I_ProvideItemInformation {
 

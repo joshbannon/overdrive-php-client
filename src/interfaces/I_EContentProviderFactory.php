@@ -6,7 +6,7 @@
  * Time: 9:48 AM
  */
 
-namespace OverDrivePHPClient\interfaces;
+namespace OverDriveClient\interfaces;
 
 interface I_EContentProviderFactory {
     /**

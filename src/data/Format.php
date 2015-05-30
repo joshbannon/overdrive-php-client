@@ -6,7 +6,7 @@
  * Time: 3:26 PM
  */
 
-namespace OverDrivePHPClient\data;
+namespace OverDriveClient\data;
 
 
 class Format {

@@ -6,9 +6,9 @@
  * Time: 11:47 AM
  */
 
-namespace OverDrivePHPClient\client;
+namespace OverDriveClient\client;
 
-use OverDrivePHPClient\data\AccessLink, OverDrivePHPClient\data\Loan;
+use OverDriveClient\data\AccessLink, OverDriveClient\data\Loan;
 
 class OverDriveLoan extends Loan {
     /** @var  AccessLink[] */

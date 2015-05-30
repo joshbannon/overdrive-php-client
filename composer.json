@@ -1,5 +1,5 @@
 {
-  "name": "joshbannon/OverDrive-PHP-Client",
+  "name": "joshbannon/overdrive-client",
   "description": "An API client for overdrive.com",
   "keywords": ["library", "libraries", "e-content", "econtent", "overdrive"],
   "type": "library",
@@ -22,12 +22,12 @@
   },
   "autoload": {
     "psr-4": {
-      "OverDrivePHPClient\\": "src/"
+      "OverDriveClient\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "OverDrivePHPClient\\Tests\\": "tests/"
+      "OverDriveClient\\Tests\\": "tests/"
     }
   },
   "extra": {

@@ -6,7 +6,7 @@
  * Time: 8:50 AM
  */
 
-namespace OverDrivePHPClient\data;
+namespace OverDriveClient\data;
 
 
 class LoanOption

@@ -6,9 +6,9 @@
  * Time: 9:19 AM
  */
 
-namespace OverDrivePHPClient\interfaces;
+namespace OverDriveClient\interfaces;
 
-use OverDrivePHPClient\data\Loan, OverDrivePHPClient\data\LoanOption, OverDrivePHPClient\data\Hold;
+use OverDriveClient\data\Loan, OverDriveClient\data\LoanOption, OverDriveClient\data\Hold;
 
 interface I_ProvidePatronServices extends I_ProvideItemInformation {
 

@@ -6,7 +6,7 @@
  * Time: 3:27 PM
  */
 
-namespace OverDrivePHPClient\data;
+namespace OverDriveClient\data;
 
 use DateTime;
 

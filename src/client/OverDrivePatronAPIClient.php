@@ -6,17 +6,17 @@
  * Time: 2:32 PM
  */
 
-namespace OverDrivePHPClient\client;
+namespace OverDriveClient\client;
 
-use OverDrivePHPClient\interfaces\I_ProvidePatronServices,
-    OverDrivePHPClient\data\AccessLink,
-    OverDrivePHPClient\data\AccessToken,
-    OverDrivePHPClient\data\AlreadyReservedException,
-    OverDrivePHPClient\data\CannotReturnException,
-    OverDrivePHPClient\data\Hold,
-    OverDrivePHPClient\data\InvalidCredentialsException,
-    OverDrivePHPClient\data\Loan,
-    OverDrivePHPClient\data\LoanOption
+use OverDriveClient\interfaces\I_ProvidePatronServices,
+    OverDriveClient\data\AccessLink,
+    OverDriveClient\data\AccessToken,
+    OverDriveClient\data\AlreadyReservedException,
+    OverDriveClient\data\CannotReturnException,
+    OverDriveClient\data\Hold,
+    OverDriveClient\data\InvalidCredentialsException,
+    OverDriveClient\data\Loan,
+    OverDriveClient\data\LoanOption
    ;
 
 use \Memcached\Wrapper as Cache;
@@ -39,7 +39,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
     /** @var  AccessToken $_access_token */
     private $_access_token;
 
-    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $librarycardILS_ID,  Cache $cache = null, $notificationEmail, $userAgent = "OverDrivePHPClient")
+    function __construct($client, $patronAuthUrlBase, $patronAPIUrlBase, $libraryAuthBase, $libraryAPIBase, $collectionId, $websiteId, $librarycardILS_ID,  Cache $cache = null, $notificationEmail, $userAgent = "OverDriveClient")
     {
         parent::__construct($client, $libraryAuthBase, $libraryAPIBase, $collectionId, $cache, $userAgent);
         $this->_client = $client;

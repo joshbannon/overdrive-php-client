@@ -1,13 +1,13 @@
 <?php
 
-use \OverDrivePHPClient\client\OverDriveAPIClientFactory,
-    \OverDrivePHPClient\client\OverDriveLibraryAPIClient,
-    \OverDrivePHPClient\client\OverDrivePatronAPIClient,
-    \OverDrivePHPClient\data\CannotReturnException,
-    \OverDrivePHPClient\data\InvalidCredentialsException,
-    \OverDrivePHPClient\data\Loan,
-    \OverDrivePHPClient\data\LoanOption,
-    \OverDrivePHPClient\data\Hold
+use \OverDriveClient\client\OverDriveAPIClientFactory,
+    \OverDriveClient\client\OverDriveLibraryAPIClient,
+    \OverDriveClient\client\OverDrivePatronAPIClient,
+    \OverDriveClient\data\CannotReturnException,
+    \OverDriveClient\data\InvalidCredentialsException,
+    \OverDriveClient\data\Loan,
+    \OverDriveClient\data\LoanOption,
+    \OverDriveClient\data\Hold
     ;
 
 use \Memcached\Wrapper as Cache;

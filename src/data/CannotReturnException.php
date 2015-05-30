@@ -6,7 +6,7 @@
  * Time: 11:12 AM
  */
 
-namespace OverDrivePHPClient\data;
+namespace OverDriveClient\data;
 
 
 class CannotReturnException extends \Exception {

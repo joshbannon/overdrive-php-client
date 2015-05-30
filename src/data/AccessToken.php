@@ -6,7 +6,7 @@
  * Time: 2:50 PM
  */
 
-namespace OverDrivePHPClient\data;
+namespace OverDriveClient\data;
 
 
 class AccessToken {

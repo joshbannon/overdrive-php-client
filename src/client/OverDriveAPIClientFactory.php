@@ -6,9 +6,9 @@
  * Time: 4:33 PM
  */
 
-namespace OverDrivePHPClient\client;
+namespace OverDriveClient\client;
 
-use OverDrivePHPClient\interfaces\I_User, OverDrivePHPClient\interfaces\I_EContentProviderFactory;
+use OverDriveClient\interfaces\I_User, OverDriveClient\interfaces\I_EContentProviderFactory;
 
 class OverDriveAPIClientFactory implements I_EContentProviderFactory {
 

@@ -6,7 +6,7 @@
  * Time: 10:41 AM
  */
 
-namespace OverDrivePHPClient\data;
+namespace OverDriveClient\data;
 
 
 abstract class Hold {

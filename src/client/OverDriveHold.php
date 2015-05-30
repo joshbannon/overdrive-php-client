@@ -6,9 +6,9 @@
  * Time: 9:14 AM
  */
 
-namespace OverDrivePHPClient\client;
+namespace OverDriveClient\client;
 
-use OverDrivePHPClient\data\Hold;
+use OverDriveClient\data\Hold;
 
 class OverDriveHold extends Hold {
 

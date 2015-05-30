@@ -6,7 +6,7 @@
  * Time: 11:05 AM
  */
 
-namespace OverDrivePHPClient\data;
+namespace OverDriveClient\data;
 
 
 class AccessLink {
