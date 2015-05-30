@@ -25,7 +25,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
     static private $libraryId;
     static private $collectionId;
     static private $websiteId;
-    static private $ilsId;//Generally the patron's library card number
+    static private $ilsId;
 
     /** @var  OverDriveLibraryAPIClient */
     static private $libraryDriver;
@@ -37,7 +37,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
     static private $notificationEmail;
 
     /** @var  string */
-    static private $username;
+    static private $username; //Generally the library card number
 
     public static function setUpBeforeClass()
     {
