@@ -33,6 +33,9 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
     /** @var  OverDrivePatronAPIClient */
     static private $patronDriver;
 
+    /** @var  string */
+    static private $notificationEmail;
+
     public static function setUpBeforeClass()
     {
         static::$libraryAuthUrlBase = "https://oauth.overdrive.com";
@@ -45,6 +48,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
         static::$collectionId = "xxx";
         static::$websiteId = 269;
         static::$ilsId = "xxx";
+        static::$notificationEmail = "x@y.com";
     }
 
     public function test_libraryLoginShouldSucceed()

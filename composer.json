@@ -1,6 +1,6 @@
 {
   "name": "joshbannon/OverDrivePHPClient",
-  "description": "description_text",
+  "description": "An API client for overdrive.com to query library and patron information, place checkouts and holds, check availability, and download titles.",
   "minimum-stability": "stable",
   "license": "MIT",
   "authors": [

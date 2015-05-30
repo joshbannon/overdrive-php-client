@@ -175,7 +175,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
                 array(
                     'headers' => array(
                         "Accept" => "application/json",
-                        "User-Agent" => "DCL User Agent",
+                        "User-Agent" => $this->_userAgent,
                         "Authorization" => "Bearer ".$this->_access_token->getToken()
                     ),
                     'timeout' => 10,
@@ -220,7 +220,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
                 array(
                     'headers' => array(
                         "Accept" => "application/json",
-                        "User-Agent" => "DCL User Agent",//TODO
+                        "User-Agent" => $this->_userAgent,
                         "Authorization" => "Bearer ".$this->_access_token->getToken()
                     ),
                     'timeout' => 10,
@@ -250,7 +250,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
             $response = $this->_client->get($this->_apiUrlBase . "/v1/collections/".$collectionId."/products", array(
                 'headers' => array(
                     "Accept" => "application/json",
-                    "User-Agent" => "DCL User Agent",//TODO
+                    "User-Agent" => $this->_userAgent,
                     "Authorization" => "Bearer ".$this->_access_token->getToken()
                 ),
                 'query' => array("offset"=>$offset, "limit"=>$limit),
