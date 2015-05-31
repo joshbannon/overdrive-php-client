@@ -28,7 +28,7 @@ class OverDriveAPIClientFactory implements I_EContentProviderFactory {
         $password = null;
         if($user) {
             $username = $user->getBarcode();
-            $password = $user->getPin();
+            //$password = $user->getPin(); //Require password is probably turned off
         } else {
             throw new \Exception("No logged in User");
         }
@@ -60,7 +60,7 @@ class OverDriveAPIClientFactory implements I_EContentProviderFactory {
      */
     static function getLibraryServices($configArray, \Memcached\Wrapper $memcachedWrapper) {
 
-        if(static::$_libraryClient == null) {
+        if(static::$_libraryClient === null) {
             static::$_libraryClient = new OverDriveLibraryAPIClient(
                 new \GuzzleHttp\Client(),
                 $configArray['OverDrive']['libraryAuthURL'],

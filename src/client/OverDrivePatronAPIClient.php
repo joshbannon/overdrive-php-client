@@ -26,7 +26,6 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
     private $_client;
     private $_authUrlBase;
     private $_apiUrlBase;
-    private $_collectionId;
     private $_websiteId;
     private $_ilsId;
     private $_notificationEmail;
@@ -45,7 +44,6 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
         $this->_client = $client;
         $this->_authUrlBase = $patronAuthUrlBase;
         $this->_apiUrlBase = $patronAPIUrlBase;
-        $this->_collectionId = $collectionId;
         $this->_websiteId = $websiteId;
         $this->_ilsId = $ilsId;
         $this->_cache = $cache;
@@ -99,10 +97,10 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             )));
 
         try {
-            if ($response->getStatusCode() == 200) {
+            if ($response->getStatusCode() === 200) {
                 $this->_access_token = self::getOathTokenFromResponse($response);
 
-                if($this->_cache != null) {
+                if($this->_cache !== null) {
                     $secondsTillExpiration = $this->_access_token->getExpirationTime()->getTimestamp() - time(); //PHP timestamps are apparently in seconds... crazy
                     $this->_cache->set($memcacheKey, $this->_access_token, $secondsTillExpiration - 2);
                 }
@@ -117,7 +115,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             }
         } catch(\GuzzleHttp\Exception\ServerException $e) {
             $json = json_decode((string)$e->getResponse()->getBody(), true);
-            if(!empty($json) && $json['response']['code'] == "FORBIDDEN_ACCESS") {
+            if(!empty($json) && $json['response']['code'] === "FORBIDDEN_ACCESS") {
                 throw new InvalidCredentialsException();
             }
         } catch(\Exception $e) {
@@ -302,7 +300,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
                 'connect_timeout' => 5)
         );
 
-        if($response->getStatusCode() == 204) { //204 Correct, no content returned
+        if($response->getStatusCode() === 204) { //204 Correct, no content returned
             $this->_cache->delete(self::KEY_GET_HOLDS.$this->_username);
             $this->_cache->delete(self::KEY_GET_ITEM_AVAILABILITY.$hold->getExternalItemId());
 
@@ -329,7 +327,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
                     'timeout' => 5,
                     'connect_timeout' => 5)
             );
-            if($response->getStatusCode() == 204) { //204 Correct, no content returned
+            if($response->getStatusCode() === 204) { //204 Correct, no content returned
                 $this->_cache->delete(self::KEY_GET_CHECKED_OUT.$this->_username);
                 $this->_cache->delete(self::KEY_GET_ITEM_AVAILABILITY.$loan->getExternalItemId());
                 return;
@@ -391,7 +389,8 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             if($response->getStatusCode()==201) { //201: Created
                 $bodyStream = $response->getBody();
                 $strCast = (string)$bodyStream;
-                $jsonResponse = json_decode($strCast, true);
+                /** @noinspection PhpUnusedLocalVariableInspection */
+                $jsonResponse = json_decode($strCast, true); //We want to parse this because it should have content, but we don't need to use that content
                 $this->_cache->delete(self::KEY_GET_HOLDS.$this->_username);
                 $this->_cache->delete(self::KEY_GET_ITEM_AVAILABILITY.$loanOption->getExternalRecordId());
                 return new OverDriveHold(
@@ -400,15 +399,15 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
                 );
             }
         } catch( \GuzzleHttp\Exception\ClientException $e) {
-            $response = $e->getResponse();
-            $bodyStream = $response->getBody();
-            $strCast = (string)$bodyStream;
-            $jsonResponse = json_decode($strCast, true);
+            //$response = $e->getResponse();
+            //$bodyStream = $response->getBody();
+            //$strCast = (string)$bodyStream;
+            //$jsonResponse = json_decode($strCast, true);
         }catch( \GuzzleHttp\Exception\RequestException $e) {
-            $response = $e->getResponse();
-            $bodyStream = $response->getBody();
-            $strCast = (string)$bodyStream;
-            $jsonResponse = json_decode($strCast, true);
+            //$response = $e->getResponse();
+            //$bodyStream = $response->getBody();
+            //$strCast = (string)$bodyStream;
+            //$jsonResponse = json_decode($strCast, true);
         }
 
         throw new \Exception("Unable to place OverDrive hold.");
@@ -443,7 +442,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
                     'body' => $postBody)
             );
             $bodyStream = $response->getBody();
-            if($response->getStatusCode() == 201) {
+            if($response->getStatusCode() === 201) {
                 $strCast = (string)$bodyStream;
                 $jsonResponse = json_decode($strCast, true);
 
@@ -457,16 +456,16 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             }
             throw new \Exception("Did not get back a good confirmation when checking out OverDrive Item");
         } catch( \GuzzleHttp\Exception\ClientException $e) {
-            $response = $e->getResponse();
-            $bodyStream = $response->getBody();
-            $strCast = (string)$bodyStream;
-            $jsonResponse = json_decode($strCast, true);
+//            $response = $e->getResponse();
+//            $bodyStream = $response->getBody();
+//            $strCast = (string)$bodyStream;
+//            $jsonResponse = json_decode($strCast, true);
             throw new \Exception("Client error when checking out OverDrive Item");
         }catch( \GuzzleHttp\Exception\RequestException $e) {
-            $response = $e->getResponse();
-            $bodyStream = $response->getBody();
-            $strCast = (string)$bodyStream;
-            $jsonResponse = json_decode($strCast, true);
+//            $response = $e->getResponse();
+//            $bodyStream = $response->getBody();
+//            $strCast = (string)$bodyStream;
+//            $jsonResponse = json_decode($strCast, true);
             throw new \Exception("Request error when checking out OverDrive Item");
         }
     }
@@ -528,7 +527,7 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
 
             );
             $bodyStream = $response->getBody();
-            if($response->getStatusCode() == 201) {
+            if($response->getStatusCode() === 201) {
                 $strCast = (string)$bodyStream;
                 $jsonResponse = json_decode($strCast, true);
 
@@ -540,16 +539,16 @@ class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_Pr
             }
             throw new \Exception("Did not get back a good confirmation when checking out OverDrive Item");
         } catch( \GuzzleHttp\Exception\ClientException $e) {
-            $response = $e->getResponse();
-            $bodyStream = $response->getBody();
-            $strCast = (string)$bodyStream;
-            $jsonResponse = json_decode($strCast, true);
+//            $response = $e->getResponse();
+//            $bodyStream = $response->getBody();
+//            $strCast = (string)$bodyStream;
+//            $jsonResponse = json_decode($strCast, true);
             throw new \Exception("Client error when checking out OverDrive Item");
         }catch( \GuzzleHttp\Exception\RequestException $e) {
-            $response = $e->getResponse();
-            $bodyStream = $response->getBody();
-            $strCast = (string)$bodyStream;
-            $jsonResponse = json_decode($strCast, true);
+//            $response = $e->getResponse();
+//            $bodyStream = $response->getBody();
+//            $strCast = (string)$bodyStream;
+//            $jsonResponse = json_decode($strCast, true);
             throw new \Exception("Request error when checking out OverDrive Item");
         }
     }

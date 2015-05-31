@@ -23,7 +23,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
     private $_client;
     private $_authUrlBase;
     private $_apiUrlBase;
-    private $collectionId;
+    private $_collectionId;
     /** @var  Cache|null $_cache */
     private $_cache;
     /** @var  string $_userAgent */
@@ -37,7 +37,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
         $this->_client = $client;
         $this->_authUrlBase = $libraryAuthUrlBase;
         $this->_apiUrlBase = $libraryAPIUrlBase;
-        $this->collectionId = $collectionId;
+        $this->_collectionId = $collectionId;
         $this->_cache = $cache;
     }
 
@@ -73,10 +73,10 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
                 'body' => $grantBody
             ));
 
-            if ($response->getStatusCode() == 200) {
+            if ($response->getStatusCode() === 200) {
                 $this->_access_token = self::getOathTokenFromResponse($response);
 
-                if($this->_cache != null) {
+                if($this->_cache !== null) {
                     $secondsTillExpiration = $this->_access_token->getExpirationTime()->getTimestamp() - time(); //PHP timestamps are apparently in seconds... crazy
                     $this->_cache->set($memcacheKey, $this->_access_token, $secondsTillExpiration - 2);
                 }
@@ -92,7 +92,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
             }
         } catch(\GuzzleHttp\Exception\ServerException $e) {
             $json = json_decode((string)$e->getResponse()->getBody(), true);
-            if(!empty($json) && $json['response']['code'] == "FORBIDDEN_ACCESS") {
+            if(!empty($json) && $json['response']['code'] === "FORBIDDEN_ACCESS") {
                 throw new InvalidCredentialsException();
             }
         } catch(\Exception $e) {
@@ -177,7 +177,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
 
         try {
             $response = $this->_client->get(
-                $this->_apiUrlBase . "/v1/collections/{$this->collectionId}/products/{$overdriveId}/availability",
+                $this->_apiUrlBase . "/v1/collections/{$this->_collectionId}/products/{$overdriveId}/availability",
                 array(
                     'headers' => array(
                         "Accept" => "application/json",
@@ -188,13 +188,13 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
                     'connect_timeout' => 10,
                 ));
 
-            if ($response->getStatusCode() == 200) {
+            if ($response->getStatusCode() === 200) {
                 $bodyStream = $response->getBody();
                 $body = (string)$bodyStream;
                 /** @var array $responseJ */
                 $responseJ = json_decode($body, true);
 
-                if($this->_cache != null) {
+                if($this->_cache !== null) {
                     $this->_cache->set($cacheKey, $responseJ, 60*5);//Cache for five minutes
                 }
                 return $responseJ;
@@ -222,7 +222,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
 
         try {
             $response = $this->_client->get(
-                $this->_apiUrlBase . "/v1/collections/{$this->collectionId}/products/{$overdriveId}/metadata",
+                $this->_apiUrlBase . "/v1/collections/{$this->_collectionId}/products/{$overdriveId}/metadata",
                 array(
                     'headers' => array(
                         "Accept" => "application/json",
@@ -233,7 +233,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
                     'connect_timeout' => 10,
                 ));
 
-            if ($response->getStatusCode() == 200) {
+            if ($response->getStatusCode() === 200) {
                 $bodyStream = $response->getBody();
                 $body = (string)$bodyStream;
                 /** @var array $responseJ */
@@ -249,11 +249,14 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
     }
 
     /**
-     * Used for tests only. The real indexing happens in Java.
+     * Used for tests only. You probably want to use local search.
+     * @param int $offset
+     * @param int $limit
+     * @return array
      */
-    public function search($collectionId = 'L1BGAEAAA2f', $offset = 100, $limit = 5) {
+    public function search($offset = 100, $limit = 5) {
         try {
-            $response = $this->_client->get($this->_apiUrlBase . "/v1/collections/".$collectionId."/products", array(
+            $response = $this->_client->get($this->_apiUrlBase . "/v1/collections/".$this->_collectionId."/products", array(
                 'headers' => array(
                     "Accept" => "application/json",
                     "User-Agent" => $this->_userAgent,
@@ -264,7 +267,7 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
                 'connect_timeout' => 10,
             ));
 
-            if ($response->getStatusCode() == 200) {
+            if ($response->getStatusCode() === 200) {
                 $bodyStream = $response->getBody();
                 $body = (string)$bodyStream;
                 /** @var array $responseJ */
