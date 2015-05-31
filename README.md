@@ -49,7 +49,7 @@ $client = new OverDrivePatronAPIClient(
             $notificationEmail,
             $cache);
 //Login() stores an access token for subsequent calls. Automatically handles timeout.
-$client->login($clientKey, $clientSecret);
+$client->login($clientKey, $clientSecret, $username); //$username is generally the patron's barcode
 $totalCopies = $client->getTotalCopies($itemId);
 $numAvailable = $client->getAvailable($itemId);
 $loanOptionsCollection = $client->getLoanOptions($itemId);
