@@ -80,4 +80,4 @@ interface I_ProvidePatronServicesInterface extends I_ProvideItemInformationInter
      * @return boolean
      */
     public function canReturn(Loan $loan);
-} 
+}

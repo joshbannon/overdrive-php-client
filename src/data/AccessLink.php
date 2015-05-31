@@ -58,4 +58,4 @@ class AccessLink {
     {
         return $this->_label;
     }
-} 
+}

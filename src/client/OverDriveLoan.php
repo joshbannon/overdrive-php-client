@@ -34,4 +34,4 @@ class OverDriveLoan extends Loan {
     {
         return $this->_links;
     }
-} 
+}

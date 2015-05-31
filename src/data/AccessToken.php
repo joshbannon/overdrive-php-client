@@ -60,4 +60,4 @@ class AccessToken {
     {
         return $this->_type;
     }
-} 
+}

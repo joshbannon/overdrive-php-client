@@ -36,4 +36,4 @@ abstract class Hold {
     }
 
     public abstract function isAvailable();
-} 
+}

@@ -84,4 +84,4 @@ class OverDriveAPIClientFactoryInterface implements EContentProviderFactoryInter
 
         return static::$_libraryClient;
     }
-} 
+}

@@ -56,4 +56,4 @@ class LoanOptionsCollection {
         }
         return $formats;
     }
-} 
+}

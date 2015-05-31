@@ -50,4 +50,4 @@ interface I_ProvideItemInformationInterface {
      * @return String
      */
     public function getCoverURL($externalRecordId);
-} 
+}

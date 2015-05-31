@@ -11,4 +11,4 @@ namespace OverDriveClient\data;
 
 class InvalidCredentialsException extends \Exception {
 
-} 
+}

@@ -23,4 +23,4 @@ interface EContentProviderFactoryInterface {
      * @return mixed
      */
     static function getLibraryServices($configArray, \Memcached\Wrapper $memcachedWrapper);
-} 
+}
