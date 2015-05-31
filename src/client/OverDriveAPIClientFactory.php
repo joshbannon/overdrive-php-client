@@ -8,9 +8,9 @@
 
 namespace OverDriveClient\client;
 
-use OverDriveClient\interfaces\I_User, OverDriveClient\interfaces\I_EContentProviderFactory;
+use OverDriveClient\interfaces\UserInterface, OverDriveClient\interfaces\EContentProviderFactoryInterface;
 
-class OverDriveAPIClientFactory implements I_EContentProviderFactory {
+class OverDriveAPIClientFactoryInterface implements EContentProviderFactoryInterface {
 
     /** @var OverDriveLibraryAPIClient $_libraryClient */
     private static $_libraryClient = null;
@@ -18,11 +18,14 @@ class OverDriveAPIClientFactory implements I_EContentProviderFactory {
     private static $_patronAPIClients = [];
 
     /**
-     * @param I_User $user
+     * @param UserInterface $user
+     * @param $configArray
+     * @param \Memcached\Wrapper $memcachedWrapper
+     * @return null|OverDrivePatronAPIClient
      * @throws \Exception
-     * @return OverDrivePatronAPIClient
+     * @throws \OverDriveClient\data\InvalidCredentialsException
      */
-    static function getPatronServices(I_User $user, $configArray, \Memcached\Wrapper $memcachedWrapper) {
+    static function getPatronServices(UserInterface $user, $configArray, \Memcached\Wrapper $memcachedWrapper) {
 
         $username = null;
         $password = null;
@@ -56,7 +59,10 @@ class OverDriveAPIClientFactory implements I_EContentProviderFactory {
     }
 
     /**
+     * @param $configArray
+     * @param \Memcached\Wrapper $memcachedWrapper
      * @return OverDriveLibraryAPIClient
+     * @throws \OverDriveClient\data\InvalidCredentialsException
      */
     static function getLibraryServices($configArray, \Memcached\Wrapper $memcachedWrapper) {
 

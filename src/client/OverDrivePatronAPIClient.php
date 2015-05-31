@@ -8,7 +8,7 @@
 
 namespace OverDriveClient\client;
 
-use OverDriveClient\interfaces\I_ProvidePatronServices,
+use OverDriveClient\interfaces\I_ProvidePatronServicesInterface,
     OverDriveClient\data\AccessLink,
     OverDriveClient\data\AccessToken,
     OverDriveClient\data\AlreadyReservedException,
@@ -21,7 +21,7 @@ use OverDriveClient\interfaces\I_ProvidePatronServices,
 
 use \Memcached\Wrapper as Cache;
 
-class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_ProvidePatronServices {
+class OverDrivePatronAPIClient extends OverDriveLibraryAPIClient implements I_ProvidePatronServicesInterface {
     /** @var  \GuzzleHttp\Client */
     private $_client;
     private $_authUrlBase;

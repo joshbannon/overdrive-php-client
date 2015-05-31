@@ -8,7 +8,7 @@
  */
 namespace OverDriveClient\interfaces;
 
-interface I_User
+interface UserInterface
 {
     function getBarcode();
     function getPin();

@@ -8,7 +8,7 @@
 
 namespace OverDriveClient\client;
 
-use OverDriveClient\interfaces\I_ProvideItemInformation,
+use OverDriveClient\interfaces\I_ProvideItemInformationInterface,
     OverDriveClient\data\AccessToken,
     OverDriveClient\data\Format,
     OverDriveClient\data\InvalidCredentialsException,
@@ -18,7 +18,7 @@ use OverDriveClient\interfaces\I_ProvideItemInformation,
 use \Memcached\Wrapper as Cache;
 use Psr\Http\Message\ResponseInterface;
 
-class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
+class OverDriveLibraryAPIClient implements I_ProvideItemInformationInterface {
     /** @var  \GuzzleHttp\Client */
     private $_client;
     private $_authUrlBase;

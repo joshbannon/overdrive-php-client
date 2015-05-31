@@ -1,6 +1,6 @@
 <?php
 
-use \OverDriveClient\client\OverDriveAPIClientFactory,
+use \OverDriveClient\client\OverDriveAPIClientFactoryInterface,
     \OverDriveClient\client\OverDriveLibraryAPIClient,
     \OverDriveClient\client\OverDrivePatronAPIClient,
     \OverDriveClient\data\CannotReturnException,

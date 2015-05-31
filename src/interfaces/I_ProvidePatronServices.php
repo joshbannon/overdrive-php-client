@@ -8,9 +8,13 @@
 
 namespace OverDriveClient\interfaces;
 
-use OverDriveClient\data\Loan, OverDriveClient\data\LoanOption, OverDriveClient\data\Hold;
+use OverDriveClient\data\AccessLink,
+    OverDriveClient\data\AlreadyReservedException,
+    OverDriveClient\data\Loan,
+    OverDriveClient\data\LoanOption,
+    OverDriveClient\data\Hold;
 
-interface I_ProvidePatronServices extends I_ProvideItemInformation {
+interface I_ProvidePatronServicesInterface extends I_ProvideItemInformationInterface {
 
     /**
      * @param Loan $loan

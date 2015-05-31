@@ -10,7 +10,7 @@ namespace OverDriveClient\interfaces;
 
 use OverDriveClient\data\LoanOptionsCollection;
 
-interface I_ProvideItemInformation {
+interface I_ProvideItemInformationInterface {
 
     /**
      * @param String $externalRecordId
