@@ -86,3 +86,7 @@ This package was based on the Douglas County Libraries' experimental e-content-e
 
 The OverDrive client depends on a number of other packages. In particular it uses the excellent Guzzle package to handle HTTP connections. I found the Guzzle project to be useful not only for its fantastic capabilities, but also as a guide to project structure. PHP is not really my forte these days, and I made heavy use of their readme.md and composer.json as a template for my own project.
 
+## Code Quality Analysis
+I thought this was a really useful tool, so I'll leave a link here to help you decide whether to use this library in your project. It rightfully points out that I have a bunch of debug helpers commented out, and that I have a number of TODO items.
+
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/db29c25a-3267-4c29-9637-3a3e0aefb421/mini.png)](https://insight.sensiolabs.com/projects/db29c25a-3267-4c29-9637-3a3e0aefb421)
