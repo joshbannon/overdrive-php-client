@@ -50,7 +50,7 @@ $client = new OverDrivePatronAPIClient(
             $cache);
 //Login() stores an access token for subsequent calls. Automatically handles timeout.
 $client->login($clientKey, $clientSecret);
-$totalCopies = $client->getTotalCopies($items[0]['id']);
+$totalCopies = $client->getTotalCopies($itemId);
 $numAvailable = $client->getAvailable($itemId);
 $loanOptionsCollection = $client->getLoanOptions($itemId);
 $loanOption = $loanOptionsCollection->getLoanOptions()[0]; //Format choice is unimportant for holds. Just take the first
@@ -72,7 +72,7 @@ curl -sS https://getcomposer.org/installer | php
 Next, run the Composer command to install the client:
 
 ```bash
-composer.phar require joshbannon/
+composer.phar require joshbannon/overdrive-client
 ```
 
 After installing, you need to require Composer's autoloader:
