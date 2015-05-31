@@ -16,6 +16,7 @@ use OverDriveClient\interfaces\I_ProvideItemInformation,
     OverDriveClient\data\LoanOptionsCollection;
 
 use \Memcached\Wrapper as Cache;
+use Psr\Http\Message\ResponseInterface;
 
 class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
     /** @var  \GuzzleHttp\Client */
@@ -73,22 +74,11 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
             ));
 
             if ($response->getStatusCode() == 200) {
-                $bodyStream = $response->getBody();
-                $body = (string)$bodyStream;
-                /** @var array $responseJ */
-                $responseJ = json_decode($body, true);
-
-                $expiresSecondsFromNow = $responseJ['expires_in'];
-                $accessToken = new AccessToken(
-                    $responseJ['access_token'],
-                    $responseJ['token_type'],
-                    (new \DateTime())->add( \DateInterval::createFromDateString($expiresSecondsFromNow.'second') ),
-                    $responseJ['scope']
-                );
-                $this->_access_token = $accessToken;
+                $this->_access_token = self::getOathTokenFromResponse($response);
 
                 if($this->_cache != null) {
-                    $this->_cache->set($memcacheKey, $accessToken, $expiresSecondsFromNow - 2);
+                    $secondsTillExpiration = $this->_access_token->getExpirationTime()->getTimestamp() - time(); //PHP timestamps are apparently in seconds... crazy
+                    $this->_cache->set($memcacheKey, $this->_access_token, $secondsTillExpiration - 2);
                 }
 
                 return true;
@@ -110,6 +100,22 @@ class OverDriveLibraryAPIClient implements I_ProvideItemInformation {
         }
 
         return false;
+    }
+
+    static function getOathTokenFromResponse(ResponseInterface $response)
+    {
+        $bodyStream = $response->getBody();
+        $body = (string)$bodyStream;
+        /** @var array $responseJ */
+        $responseJ = json_decode($body, true);
+
+        $expiresSecondsFromNow = $responseJ['expires_in'];
+        return new AccessToken(
+            $responseJ['access_token'],
+            $responseJ['token_type'],
+            (new \DateTime())->add( \DateInterval::createFromDateString($expiresSecondsFromNow.'second') ),
+            $responseJ['scope']
+        );
     }
 
     public function isCheckoutAvailable($overdriveId) {
