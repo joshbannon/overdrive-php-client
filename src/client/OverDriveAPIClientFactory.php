@@ -22,8 +22,7 @@ class OverDriveAPIClientFactory implements I_EContentProviderFactory {
      * @throws \Exception
      * @return OverDrivePatronAPIClient
      */
-    static function getPatronServices(I_User $user) {
-        global $configArray, $memcachedWrapper;
+    static function getPatronServices(I_User $user, $configArray, \Memcached\Wrapper $memcachedWrapper) {
 
         $username = null;
         $password = null;
@@ -59,8 +58,7 @@ class OverDriveAPIClientFactory implements I_EContentProviderFactory {
     /**
      * @return OverDriveLibraryAPIClient
      */
-    static function getLibraryServices() {
-        global $configArray, $memcachedWrapper;
+    static function getLibraryServices($configArray, \Memcached\Wrapper $memcachedWrapper) {
 
         if(static::$_libraryClient == null) {
             static::$_libraryClient = new OverDriveLibraryAPIClient(

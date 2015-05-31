@@ -13,10 +13,10 @@ interface I_EContentProviderFactory {
      * @param I_User $user
      * @return I_ProvidePatronServices
      */
-    static function getPatronServices(I_User $user);
+    static function getPatronServices(I_User $user, $configArray, \Memcached\Wrapper $memcachedWrapper);
 
     /**
      * @return I_ProvideItemInformation
      */
-    static function getLibraryServices();
+    static function getLibraryServices($configArray, \Memcached\Wrapper $memcachedWrapper);
 } 
