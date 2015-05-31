@@ -52,7 +52,7 @@ class OverDriveDriverTests extends PHPUnit_Framework_TestCase
         static::$websiteId = 0;
         static::$ilsId = "xxx";
         static::$notificationEmail = "my@email.com";
-        static::$username = '23025000000000';;
+        static::$username = '23025000000000';
     }
 
     public function test_libraryLoginShouldSucceed()
